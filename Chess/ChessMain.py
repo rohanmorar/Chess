@@ -39,11 +39,31 @@ def main():
     gs = ChessEngine.GameState()
     loadImages() # do once before while loop for setup
     running = True
+    sqSelected = () # no square is selected initially, tuple: (row, col), keeps track of user's last click
+    playerClicks = [] # keeps track of the player's clicks as tuples [(6,4), (4,4)]
     while running:
         for event in p.event.get():
             if event.type == p.QUIT:
                 raise SystemExit
                 running = False
+            #click piece and click end-point to move piece there
+            elif event.type == p.MOUSEBUTTONDOWN:
+                location = p.mouse.get_pos() # (x,y) location of mouse
+                # get the row/col cooresponding to mouse click 
+                row = location[1] // SQ_SIZE
+                col = location[0] // SQ_SIZE
+                
+                # if our selection has already previously been selected, we are trying to deselect the piece; reset sqSelected and playerClicks
+                if sqSelected == (row, col):
+                    # print("reset selection")
+                    sqSelected = ()
+                    playerClicks = []
+                else:
+                    sqSelected = (row, col)
+                    playerClicks.append(sqSelected) # append for both first and second clicks shown in (rowIndex, colIndex) rowIndex from  top to bottom (0-7). colIndex from left to right (0-7)
+                if len(playerClicks) == 2:
+                    print("move to " + str(playerClicks[1]))
+                    
         drawGameState(screen, gs)
         # for every second at most MAX_FPS frames should pass.
         clock.tick(MAX_FPS)
