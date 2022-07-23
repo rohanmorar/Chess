@@ -37,6 +37,7 @@ def main():
     clock = p.time.Clock()
     screen.fill(p.Color("white"))
     gs = ChessEngine.GameState()
+    moves = ChessEngine.Move()
     loadImages() # do once before while loop for setup
     running = True
     sqSelected = () # no square is selected initially, tuple: (row, col), keeps track of user's last click
@@ -53,16 +54,18 @@ def main():
                 row = location[1] // SQ_SIZE
                 col = location[0] // SQ_SIZE
                 
-                # if our selection has already previously been selected, we are trying to deselect the piece; reset sqSelected and playerClicks
+                # if our selection has already previously been selected, we want to DESELECT the piece; reset sqSelected and playerClicks
                 if sqSelected == (row, col):
-                    # print("reset selection")
+                    print("Selection is reset")
                     sqSelected = ()
                     playerClicks = []
                 else:
                     sqSelected = (row, col)
                     playerClicks.append(sqSelected) # append for both first and second clicks shown in (rowIndex, colIndex) rowIndex from  top to bottom (0-7). colIndex from left to right (0-7)
                 if len(playerClicks) == 2:
+                    print(moves.getChessNotation())
                     print("move to " + str(playerClicks[1]))
+
                     
         drawGameState(screen, gs)
         # for every second at most MAX_FPS frames should pass.

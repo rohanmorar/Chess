@@ -12,14 +12,14 @@ class GameState():
         # -- represents empty space, b/w represent black/white, and R/N/B/Q/K represent Rook/Knight/Bishop/Queen/King
         # created using np array for ease of use down the line
         self.board = np.array([
-            ["bR", "bN", "bB", "bQ", "bK", "bB","bN","bR" ],
-            ["bP", "bN", "bP", "bP", "bP", "bP","bP", "bP"],
-            ["--","--", "--", "--", "--", "--","--","--"],
-            ["--","--", "--", "--", "--", "--","--","--"],
-            ["--","--", "--", "--", "--", "--","--","--"],
-            ["--","--", "--", "--", "--", "--","--","--"],
-            ["wP", "wP", "wP", "wP", "wP", "wP","wP", "wP"],
-            ["wR", "wN", "wB", "wQ", "wK", "wB","wN","wR" ]
+            ["bR", "bN", "bB", "bQ", "bK", "bB","bN","bR" ], #row: 0: "8"
+            ["bP", "bN", "bP", "bP", "bP", "bP","bP", "bP"], #row: 1: "7"
+            ["--","--", "--", "--", "--", "--","--","--"],   #row: 2: "6"
+            ["--","--", "--", "--", "--", "--","--","--"],   #row: 3: "5"
+            ["--","--", "--", "--", "--", "--","--","--"],   #row: 4: "4"
+            ["--","--", "--", "--", "--", "--","--","--"],   #row: 5: "3"
+            ["wP", "wP", "wP", "wP", "wP", "wP","wP", "wP"], #row: 6: "2"
+            ["wR", "wN", "wB", "wQ", "wK", "wB","wN","wR" ]  #row: 7: "1"
         ])
 
         self.whiteToMove = True;
@@ -40,26 +40,21 @@ class GameState():
 class Move():
     def __init__(self, startSq, endSq, board):
 
-        rowsToRanks = {"8": 0, "7": 1, "6": 2, "5": 3, "4": 4, "3": 5, "2": 6, "1": 7}
-        rowsToRanks = {v:k for k, v in rowsToRanks.items()}
-        colsToFiles = {"a": 0, "b": 1, "c": 2, "d": 3, "e": 4, "f": 5, "g": 6, "h": 7}
-        colsToFiles = {v:k for k, v in colsToFiles.items()}
+        rowsToRanks = {0: "8", 1: "7", 2: "6", 3: "5", 4: "4", 5:"3", 6:"2", 7:"1"}
+        colsToFiles = {0: "a", 1: "b", 2: "c", 3: "d", 4: "e", 5: "f", 6: "g", 7: "h"}
 
+        #decoupling the tuple coordinates (i.e. START: (6,4) -> END: (4, 4))
+        self.startRow = startSq[0] # 6
+        self.startCol = startSq[1] # 4
+        
+        self.endRow = endSq[0] # 4
+        self.endCol = endSq[1] # 4
 
-
-        #decoupling tuples for our start and end squares
-        self.startRow = startSq[0]
-        self.startCol = startSq[1]
-        self.endRow = endSq[0]
-        self.endCol = endSq[1]
-        self.pieceMoved = board[self.startRow][self.startCol]
-        self.pieceCaptured = board[self.endRow][self.endCol]
-
+        self.pieceMoved = board[self.startRow][self.startCol] # wP
+        self.pieceCaptured = board[self.endRow][self.endCol] # --
 
     def getChessNotation(self):
-        return self.getRankFile(self.startRow,self.startCol)
-        # if self.pieceMoved == "wP" or self.pieceMoved == "bP":
-        #     self.move_log.append()
+        return self.getRankFile(self.endRow, self.endCol)
 
     def getRankFile(self, row, col):
         return self.rowsToRanks[row] + self.colsToFiles[col]
