@@ -5,18 +5,11 @@ this is our driver file - responisbilities: user input handling and displays cur
 import pygame as p
 import ChessEngine
 
-p.init()
-
 WIDTH = HEIGHT = 400
 DIMENSION = 8 # standard 8x8 dimension chess board
-
 SQ_SIZE = WIDTH // DIMENSION
-
 MAX_FPS = 15 # will come to use in animation later
-
 IMAGES = {}
-
-PATH = "/Users/rohanmorar/Desktop/Chess/Chess/images"
 
 # create a function to load all our piece images one time (as to avoid lag from loading them in each frame)
 # helps when implementing option to change piece skins later
@@ -24,7 +17,7 @@ def loadImages():
     pieces = ["bB", "bN", "bR", "bK", "bQ", "wB", "wN", "wR", "wK", "wQ", "wP", "bP"]
     for piece in pieces:
          # Access Images with 'IMAGES['bB']'
-        IMAGES[piece] = p.transform.scale(p.image.load("Chess/images/" + piece + ".png"), (SQ_SIZE, SQ_SIZE))
+        IMAGES[piece] = p.transform.scale(p.image.load("images/" + piece + ".png"), (SQ_SIZE, SQ_SIZE))
 
 '''
 main driver for our code. Handle user input and updating graphics
@@ -37,7 +30,6 @@ def main():
     clock = p.time.Clock()
     screen.fill(p.Color("white"))
     gs = ChessEngine.GameState()
-    moves = ChessEngine.Move()
     loadImages() # do once before while loop for setup
     running = True
     sqSelected = () # no square is selected initially, tuple: (row, col), keeps track of user's last click
@@ -63,14 +55,20 @@ def main():
                     sqSelected = (row, col)
                     playerClicks.append(sqSelected) # append for both first and second clicks shown in (rowIndex, colIndex) rowIndex from  top to bottom (0-7). colIndex from left to right (0-7)
                 if len(playerClicks) == 2:
-                    print(moves.getChessNotation())
-                    print("move to " + str(playerClicks[1]))
+                    # check if 2nd move is valid (playerClicks[1])
+                    move = ChessEngine.Move(playerClicks[0], playerClicks[1], gs.board)
+                    print("move to " + str(move.getChessNotation()))
+                    gs.makeMove(move)
 
+                    # reset sqSelected and playerClicks after the move
+                    sqSelected = ()
+                    playerClicks = []
+
+                    # piece moves to location
                     
         drawGameState(screen, gs)
         # for every second at most MAX_FPS frames should pass.
         clock.tick(MAX_FPS)
-
         # update the full display Surface to the screen
         p.display.flip()
 
@@ -100,7 +98,7 @@ def drawBoard(screen):
 
     for row in range(DIMENSION):
         for col in range(DIMENSION):
-            color = colors[(row + col) % 2]
+            color = colors[((row + col) % 2)]
             p.draw.rect(screen, color, p.Rect(col*SQ_SIZE, row*SQ_SIZE, SQ_SIZE, SQ_SIZE))
 
 '''

@@ -3,6 +3,7 @@ Class responsible for storing all the info about the current game. It will also 
 And will keep a move log. 
 '''
 
+from turtle import update
 import numpy as np
 
 class GameState():
@@ -13,7 +14,7 @@ class GameState():
         # created using np array for ease of use down the line
         self.board = np.array([
             ["bR", "bN", "bB", "bQ", "bK", "bB","bN","bR" ], #row: 0: "8"
-            ["bP", "bN", "bP", "bP", "bP", "bP","bP", "bP"], #row: 1: "7"
+            ["bP", "bP", "bP", "bP", "bP", "bP","bP", "bP"], #row: 1: "7"
             ["--","--", "--", "--", "--", "--","--","--"],   #row: 2: "6"
             ["--","--", "--", "--", "--", "--","--","--"],   #row: 3: "5"
             ["--","--", "--", "--", "--", "--","--","--"],   #row: 4: "4"
@@ -33,15 +34,18 @@ class GameState():
         self.bKCastleK = False;
 
         self.bKCastleQ = False;
-
-        def updateMoveLog():
-            self.move_log.append(self.board)
+    
+    def makeMove(self, move):
+        self.board[move.startRow][move.startCol] = "--"
+        self.board[move.endRow][move.endCol] = move.pieceMoved
+        self.move_log.append(self.board) # update log move for undo or list of moves made
+        self.whiteToMove = not self.whiteToMove # switch player's turm
 
 class Move():
     def __init__(self, startSq, endSq, board):
 
-        rowsToRanks = {0: "8", 1: "7", 2: "6", 3: "5", 4: "4", 5:"3", 6:"2", 7:"1"}
-        colsToFiles = {0: "a", 1: "b", 2: "c", 3: "d", 4: "e", 5: "f", 6: "g", 7: "h"}
+        self.rowsToRanks = {0: "8", 1: "7", 2: "6", 3: "5", 4: "4", 5:"3", 6:"2", 7:"1"}
+        self.colsToFiles = {0: "a", 1: "b", 2: "c", 3: "d", 4: "e", 5: "f", 6: "g", 7: "h"}
 
         #decoupling the tuple coordinates (i.e. START: (6,4) -> END: (4, 4))
         self.startRow = startSq[0] # 6
@@ -53,8 +57,35 @@ class Move():
         self.pieceMoved = board[self.startRow][self.startCol] # wP
         self.pieceCaptured = board[self.endRow][self.endCol] # --
 
+        # add new board state to Move Log
+
+    def isSpaceEmpty(self):
+        if self.pieceCaptured == "--":
+            return True
+
     def getChessNotation(self):
         return self.getRankFile(self.endRow, self.endCol)
 
     def getRankFile(self, row, col):
-        return self.rowsToRanks[row] + self.colsToFiles[col]
+        return self.colsToFiles[col] + self.rowsToRanks[row] 
+
+# if space is empty, if 
+
+# class Pawn():
+#     def __init__(self):
+#         pass
+
+# class Knight():
+#     pass
+
+# class Bishop():
+#     pass
+
+# class Rook():
+#     pass
+
+# class King():
+#     pass
+
+# class Queen():
+#     pass
