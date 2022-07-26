@@ -57,15 +57,19 @@ def main():
                 if len(playerClicks) == 2:
                     # check if 2nd move is valid (playerClicks[1])
                     move = ChessEngine.Move(playerClicks[0], playerClicks[1], gs.board)
-                    print("move to " + str(move.getChessNotation()))
-                    gs.makeMove(move)
+                    if move.pieceMoved == "--": #if we selected an empty spot on first click, reset our selections
+                        sqSelected = ()
+                        playerClicks = []
+                    else:                        
+                        print("move to " + str(move.getChessNotation()))
+                        gs.makeMove(move)
 
-                    # reset sqSelected and playerClicks after the move
-                    sqSelected = ()
-                    playerClicks = []
+                        # reset sqSelected and playerClicks after the move
+                        sqSelected = ()
+                        playerClicks = []
 
-                    # piece moves to location
-                    
+                        # piece moves to location
+                        
         drawGameState(screen, gs)
         # for every second at most MAX_FPS frames should pass.
         clock.tick(MAX_FPS)
